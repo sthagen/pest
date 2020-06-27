@@ -8,6 +8,7 @@ use Closure;
 use Pest\Concerns;
 use Pest\Contracts\HasPrintableTestCaseName;
 use Pest\Datasets;
+use Pest\Exceptions\ShouldNotHappen;
 use Pest\Support\HigherOrderMessageCollection;
 use Pest\Support\NullClosure;
 use Pest\TestSuite;
@@ -39,9 +40,10 @@ final class TestCaseFactory
     /**
      * Holds the test description.
      *
-     * @readonly
+     * If the description is null, means that it
+     * will be created with the given assertions.
      *
-     * @var string
+     * @var string|null
      */
     public $description;
 
@@ -104,7 +106,7 @@ final class TestCaseFactory
     /**
      * Creates a new anonymous test case pending object.
      */
-    public function __construct(string $filename, string $description, Closure $closure = null)
+    public function __construct(string $filename, string $description = null, Closure $closure = null)
     {
         $this->filename    = $filename;
         $this->description = $description;
@@ -122,14 +124,22 @@ final class TestCaseFactory
      */
     public function build(TestSuite $testSuite): array
     {
+        if ($this->description === null) {
+            throw ShouldNotHappen::fromMessage('Description can not be empty.');
+        }
+
         $chains      = $this->chains;
         $proxies     = $this->proxies;
         $factoryTest = $this->test;
 
-        $test = function () use ($chains, $proxies, $factoryTest): void {
+        /**
+         * @return mixed
+         */
+        $test = function () use ($chains, $proxies, $factoryTest) {
             $proxies->proxy($this);
             $chains->chain($this);
-            call_user_func(Closure::bind($factoryTest, $this, get_class($this)), ...func_get_args());
+
+            return call_user_func(Closure::bind($factoryTest, $this, get_class($this)), ...func_get_args());
         };
 
         $className = $this->makeClassFromFilename($this->filename);
@@ -152,16 +162,25 @@ final class TestCaseFactory
      */
     public function makeClassFromFilename(string $filename): string
     {
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            // In case Windows, strtolower drive name, like in UsesCall.
+            $filename = (string) preg_replace_callback('~^(?P<drive>[a-z]+:\\\)~i', function ($match): string {
+                return strtolower($match['drive']);
+            }, $filename);
+        }
+
+        $filename     = (string) realpath($filename);
         $rootPath     = TestSuite::getInstance()->rootPath;
         $relativePath = str_replace($rootPath . DIRECTORY_SEPARATOR, '', $filename);
+        $relativePath = dirname(ucfirst($relativePath)) . DIRECTORY_SEPARATOR . basename($relativePath, '.php');
+        $relativePath = str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath);
+
         // Strip out any %-encoded octets.
         $relativePath = (string) preg_replace('|%[a-fA-F0-9][a-fA-F0-9]|', '', $relativePath);
-
         // Limit to A-Z, a-z, 0-9, '_', '-'.
-        $relativePath = (string) preg_replace('/[^A-Za-z0-9.\/]/', '', $relativePath);
+        $relativePath = (string) preg_replace('/[^A-Za-z0-9.\\\]/', '', $relativePath);
 
-        $classFQN     = 'P\\' . basename(ucfirst(str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath)), '.php');
-
+        $classFQN = 'P\\' . $relativePath;
         if (class_exists($classFQN)) {
             return $classFQN;
         }

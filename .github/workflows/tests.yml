@@ -29,14 +29,20 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php }}
-        extensions: mbstring, zip
+        extensions: dom, mbstring, zip
         coverage: none
 
     - name: Install Composer dependencies
       run: composer update --${{ matrix.dependency-version }} --no-interaction --prefer-dist
 
     - name: Unit Tests
-      run: bin/pest --colors=always --exclude-group=integration
+      run: php bin/pest --colors=always --exclude-group=integration
 
     - name: Integration Tests
-      run: bin/pest --colors=always --group=integration
+      run: php bin/pest --colors=always --group=integration
+
+    - name: Setup problem matchers for PHP
+      run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+    - name: Setup problem matchers for Pest
+      run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"

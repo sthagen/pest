@@ -1,5 +1,7 @@
 <?php
 
+use function Tests\mock;
+
 interface Foo
 {
     public function bar(): int;
@@ -11,5 +13,5 @@ it('has bar', function () {
         ->times(1)
         ->andReturn(2);
 
-    assertEquals(2, $mock->bar());
+    $mock->bar();
 });

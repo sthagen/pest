@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Pest\Console;
 
-use Pest\Actions\AddsCoverage;
 use Pest\Actions\AddsDefaults;
 use Pest\Actions\AddsTests;
 use Pest\Actions\LoadStructure;
 use Pest\Actions\ValidatesConfiguration;
+use Pest\Contracts\Plugins\AddsOutput;
+use Pest\Contracts\Plugins\HandlesArguments;
+use Pest\Plugin\Loader;
 use Pest\TestSuite;
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
 use PHPUnit\TextUI\Command as BaseCommand;
@@ -54,9 +56,14 @@ final class Command extends BaseCommand
     protected function handleArguments(array $argv): void
     {
         /*
-         * First, let's handle pest is own `--coverage` param.
+         * First, let's call all plugins that want to handle arguments
          */
-        $argv = AddsCoverage::from($this->testSuite, $argv);
+        $plugins = Loader::getPlugins(HandlesArguments::class);
+
+        /** @var HandlesArguments $plugin */
+        foreach ($plugins as $plugin) {
+            $argv = $plugin->handleArguments($argv);
+        }
 
         /*
          * Next, as usual, let's send the console arguments to PHPUnit.
@@ -81,6 +88,8 @@ final class Command extends BaseCommand
          */
         $this->arguments = AddsDefaults::to($this->arguments);
 
+        LoadStructure::in($this->testSuite->rootPath);
+
         $testRunner = new TestRunner($this->arguments['loader']);
         $testSuite  = $this->arguments['test'];
 
@@ -102,7 +111,6 @@ final class Command extends BaseCommand
             $this->arguments['test'] = $testSuite;
         }
 
-        LoadStructure::in($this->testSuite->rootPath);
         AddsTests::to($testSuite, $this->testSuite);
 
         return $testRunner;
@@ -119,25 +127,14 @@ final class Command extends BaseCommand
     {
         $result = parent::run($argv, false);
 
-        if ($result === 0 && $this->testSuite->coverage) {
-            if (!Coverage::isAvailable()) {
-                $this->output->writeln(
-                    "\n  <fg=white;bg=red;options=bold> ERROR </> No code coverage driver is available.</>",
-                );
-                exit(1);
-            }
+        /*
+         * Let's call all plugins that want to add output after test execution
+         */
+        $plugins = Loader::getPlugins(AddsOutput::class);
 
-            $coverage = Coverage::report($this->output);
-
-            $result = (int) ($coverage < $this->testSuite->coverageMin);
-
-            if ($result === 1) {
-                $this->output->writeln(sprintf(
-                    "\n  <fg=white;bg=red;options=bold> FAIL </> Code coverage below expected:<fg=red;options=bold> %s %%</>. Minimum:<fg=white;options=bold> %s %%</>.",
-                    number_format($coverage, 1),
-                    number_format($this->testSuite->coverageMin, 1)
-                ));
-            }
+        /** @var AddsOutput $plugin */
+        foreach ($plugins as $plugin) {
+            $result = $plugin->addOutput($result);
         }
 
         exit($result);

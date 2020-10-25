@@ -157,6 +157,11 @@
   ✓ failures
   ✓ not failures
 
+   PASS  Tests\Expect\toEndWith
+  ✓ pass
+  ✓ failures
+  ✓ not failures
+
    PASS  Tests\Expect\toEqual
   ✓ pass
   ✓ failures
@@ -182,7 +187,32 @@
   ✓ failures
   ✓ not failures
 
+   PASS  Tests\Expect\toHaveKeys
+  ✓ pass
+  ✓ failures
+  ✓ not failures
+
    PASS  Tests\Expect\toHaveProperty
+  ✓ pass
+  ✓ failures
+  ✓ not failures
+
+   PASS  Tests\Expect\toMatch
+  ✓ pass
+  ✓ failures
+  ✓ not failures
+
+   PASS  Tests\Expect\toMatchConstraint
+  ✓ pass
+  ✓ failures
+  ✓ not failures
+
+   PASS  Tests\Expect\toMatchObject
+  ✓ pass
+  ✓ failures
+  ✓ not failures
+
+   PASS  Tests\Expect\toStartWith
   ✓ pass
   ✓ failures
   ✓ not failures
@@ -225,6 +255,9 @@
   ✓ eager wrapped registered datasets with (1)
   ✓ eager wrapped registered datasets with (2)
   ✓ eager registered wrapped datasets did the job right
+  ✓ named datasets with data set "one" (1)
+  ✓ named datasets with data set "two" (2)
+  ✓ named datasets did the job right
   ✓ lazy named datasets with (Bar Object (...))
   ✓ it creates unique test case names with ('Name 1', Pest\Plugin Object (), true) #1
   ✓ it creates unique test case names with ('Name 1', Pest\Plugin Object (), true) #2
@@ -248,6 +281,7 @@
 
    PASS  Tests\Features\HigherOrderTests
   ✓ it proxies calls to object
+  ✓ it is capable doing multiple assertions
 
    PASS  Tests\Features\It
   ✓ it is a test
@@ -272,6 +306,7 @@
   - it skips with truthy closure condition
   ✓ it do not skips with falsy closure condition
   - it skips with condition and message → skipped because foo
+  - it skips when skip after assertion
 
    PASS  Tests\Features\Test
   ✓ a test
@@ -313,6 +348,9 @@
   ✓ it throws exception when `process isolation` is true
   ✓ it do not throws exception when `process isolation` is false
 
+   PASS  Tests\Unit\Datasets
+  ✓ it show the names of named datasets in their description
+
    PASS  Tests\Unit\Plugins\Version
   ✓ it outputs the version when --version is used
   ✓ it do not outputs version when --version is not used
@@ -353,5 +391,5 @@
   ✓ depends with defined arguments
   ✓ depends run test only once
 
-  Tests:  6 skipped, 208 passed
+  Tests:  7 skipped, 231 passed
   

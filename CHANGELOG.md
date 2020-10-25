@@ -6,6 +6,44 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v0.3.9 (2020-10-13)](https://github.com/pestphp/pest/compare/v0.3.8...v0.3.9)
+### Added
+- Add support for named datasets in description output ([#134](https://github.com/pestphp/pest/pull/134))
+- Add Pest version to `--help` output ([#203](https://github.com/pestphp/pest/pull/203))
+- Add support for PHPUnit 9.4.1 ([#207](https://github.com/pestphp/pest/pull/207))
+
+## [v0.3.8 (2020-10-03)](https://github.com/pestphp/pest/compare/v0.3.7...v0.3.8)
+### Added
+- Add support for PHPUnit 9.4.0 ([#199](https://github.com/pestphp/pest/pull/199))
+
+### Fixed
+- Fix chained higher order assertions returning void ([#196](https://github.com/pestphp/pest/pull/196))
+
+## [v0.3.7 (2020-09-30)](https://github.com/pestphp/pest/compare/v0.3.6...v0.3.7)
+### Added
+- Add support for PHPUnit 9.3.11 ([#193](https://github.com/pestphp/pest/pull/193))
+
+## [v0.3.6 (2020-09-21)](https://github.com/pestphp/pest/compare/v0.3.5...v0.3.6)
+### Added
+- `toMatch` expectation ([#191](https://github.com/pestphp/pest/pull/191))
+- `toMatchConstraint` expectation ([#190](https://github.com/pestphp/pest/pull/190))
+
+## [v0.3.5 (2020-09-16)](https://github.com/pestphp/pest/compare/v0.3.4...v0.3.5)
+### Added
+- `toStartWith` and `toEndWith` expectations ([#187](https://github.com/pestphp/pest/pull/187))
+
+## [v0.3.4 (2020-09-15)](https://github.com/pestphp/pest/compare/v0.3.3...v0.3.4)
+### Added
+- `toMatchObject` expectation ([4e184b2](https://github.com/pestphp/pest/commit/4e184b2f906c318a5e9cd38fe693cdab5c48d8a2))
+
+## [v0.3.3 (2020-09-13)](https://github.com/pestphp/pest/compare/v0.3.2...v0.3.3)
+### Added
+- `toHaveKeys` expectation ([204f343](https://github.com/pestphp/pest/commit/204f343831adc17bb3734553c24fac92d02f27c7))
+
+## [v0.3.2 (2020-09-12)](https://github.com/pestphp/pest/compare/v0.3.1...v0.3.2)
+### Added
+- Support to PHPUnit 9.3.9, and 9.3.10 ([1318bf9](https://github.com/pestphp/pest/commit/97f98569bc86e8b87f8cde963fe7b4bf5399623b))
+
 ## [v0.3.1 (2020-08-29)](https://github.com/pestphp/pest/compare/v0.3.0...v0.3.1)
 ### Added
 - Support to PHPUnit 9.3.8 ([#174](https://github.com/pestphp/pest/pull/174))

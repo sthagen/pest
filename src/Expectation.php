@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pest;
 
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * @internal
@@ -159,6 +160,26 @@ final class Expectation
     }
 
     /**
+     * Asserts that the value starts with $expected.
+     */
+    public function toStartWith(string $expected): Expectation
+    {
+        Assert::assertStringStartsWith($expected, $this->value);
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the value ends with $expected.
+     */
+    public function toEndWith(string $expected): Expectation
+    {
+        Assert::assertStringEndsWith($expected, $this->value);
+
+        return $this;
+    }
+
+    /**
      * Asserts that $count matches the number of elements of the value.
      */
     public function toHaveCount(int $count): Expectation
@@ -170,10 +191,19 @@ final class Expectation
 
     /**
      * Asserts that the value contains the property $name.
+     *
+     * @param mixed $value
      */
-    public function toHaveProperty(string $name): Expectation
+    public function toHaveProperty(string $name, $value = null): Expectation
     {
+        $this->toBeObject();
+
         Assert::assertTrue(property_exists($this->value, $name));
+
+        if (func_num_args() > 1) {
+            /* @phpstan-ignore-next-line */
+            Assert::assertEquals($value, $this->value->{$name});
+        }
 
         return $this;
     }
@@ -376,10 +406,26 @@ final class Expectation
 
     /**
      * Asserts that the value array has the provided $key.
+     *
+     * @param string|int $key
      */
-    public function toHaveKey(string $key): Expectation
+    public function toHaveKey($key): Expectation
     {
         Assert::assertArrayHasKey($key, $this->value);
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the value array has the provided $keys.
+     *
+     * @param array<int, int|string> $keys
+     */
+    public function toHaveKeys(array $keys): Expectation
+    {
+        foreach ($keys as $key) {
+            $this->toHaveKey($key);
+        }
 
         return $this;
     }
@@ -440,6 +486,41 @@ final class Expectation
     public function toBeWritableFile(): Expectation
     {
         Assert::assertFileIsWritable($this->value);
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the value object matches a subset
+     * of the properties of an given object.
+     *
+     * @param array<string, mixed>|object $object
+     */
+    public function toMatchObject($object): Expectation
+    {
+        foreach ((array) $object as $property => $value) {
+            $this->toHaveProperty($property, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the value matches a regular expression.
+     */
+    public function toMatch(string $expression): Expectation
+    {
+        Assert::assertMatchesRegularExpression($expression, $this->value);
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the value matches a constraint.
+     */
+    public function toMatchConstraint(Constraint $constraint): Expectation
+    {
+        Assert::assertThat($this->value, $constraint);
 
         return $this;
     }

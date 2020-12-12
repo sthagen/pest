@@ -4,7 +4,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [v0.3.15 (2020-12-04)](https://github.com/pestphp/pest/compare/v0.3.14...v0.3.15)
+### Added
+- Support for PHPUnit 9.5.0 ([#234](https://github.com/pestphp/pest/pull/234))
+- Support for extending expectation API ([#232](https://github.com/pestphp/pest/pull/232))
+
+### Fixed
+- Static analysis while using string as key for datasets ([#233](https://github.com/pestphp/pest/pull/233))
+
+## [v0.3.14 (2020-11-28)](https://github.com/pestphp/pest/compare/v0.3.13...v0.3.14)
+### Added
+- `pest:dusk` command ([#223](https://github.com/pestphp/pest/pull/223))
+- Better feedback on errors in `toMatchArray` and `toMatchObject` ([#231](https://github.com/pestphp/pest/pull/231))
+
+## [v0.3.13 (2020-11-23)](https://github.com/pestphp/pest/compare/v0.3.12...v0.3.13)
+### Added
+- `toMatchArray` expectation ([7bea51f](https://github.com/pestphp/pest/commit/7bea51fe09dd2eca7093e4c34cf2dab2e8d39fa5), [3fd24d9](https://github.com/pestphp/pest/commit/3fd24d96d3145dcebdb0aab40aa8b76faa8b6979))
+- Add Pest options to `--help` output ([#217](https://github.com/pestphp/pest/pull/217))
+
+### Fixed
+- Resolve issue with name resolution in `depends()` ([#216](https://github.com/pestphp/pest/pull/216))
+
+## [v0.3.12 (2020-11-11)](https://github.com/pestphp/pest/compare/v0.3.11...v0.3.12)
+### Added
+- Add support for PHPUnit 9.4.3 ([#219](https://github.com/pestphp/pest/pull/219))
+
+## [v0.3.11 (2020-11-09)](https://github.com/pestphp/pest/compare/v0.3.10...v0.3.11)
+### Changed
+- Improved the exception output for the TeamCity printer (usage with phpstorm plugin) ([#215](https://github.com/pestphp/pest/pull/215))
+
+## [v0.3.10 (2020-11-01)](https://github.com/pestphp/pest/compare/v0.3.9...v0.3.10)
+### Added
+- Add support for PHPUnit 9.4.2 ([d177ab5](https://github.com/pestphp/pest/commit/d177ab5ec2030c5bb8e418d10834c370c94c433d))
 
 ## [v0.3.9 (2020-10-13)](https://github.com/pestphp/pest/compare/v0.3.8...v0.3.9)
 ### Added

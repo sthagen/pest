@@ -2,6 +2,12 @@
    PASS  Tests\CustomTestCase\ExecutedTest
   ✓ that gets executed
 
+   PASS  Tests\Expect\extend
+  ✓ it macros true is true
+  ✓ it macros false is not true
+  ✓ it macros true is true with argument
+  ✓ it macros false is not true with argument
+
    PASS  Tests\Expect\not
   ✓ not property calls
 
@@ -202,6 +208,11 @@
   ✓ failures
   ✓ not failures
 
+   PASS  Tests\Expect\toMatchArray
+  ✓ pass
+  ✓ failures
+  ✓ not failures
+
    PASS  Tests\Expect\toMatchConstraint
   ✓ pass
   ✓ failures
@@ -348,6 +359,9 @@
   ✓ it throws exception when `process isolation` is true
   ✓ it do not throws exception when `process isolation` is false
 
+   PASS  Tests\Unit\Console\Help
+  ✓ it outputs the help information when --help is used
+
    PASS  Tests\Unit\Datasets
   ✓ it show the names of named datasets in their description
 
@@ -374,6 +388,9 @@
    PASS  Tests\Unit\TestSuite
   ✓ it does not allow to add the same test description twice
 
+   PASS  Tests\Visual\Help
+  ✓ visual snapshot of help command output
+
    PASS  Tests\Visual\SingleTestOrDirectory
   ✓ allows to run a single test
   ✓ allows to run a directory
@@ -386,10 +403,12 @@
    PASS  Tests\Features\Depends
   ✓ first
   ✓ second
+  ✓ it asserts true is true
   ✓ depends
   ✓ depends with ...params
   ✓ depends with defined arguments
   ✓ depends run test only once
+  ✓ depends works with the correct test name
 
-  Tests:  7 skipped, 231 passed
+  Tests:  7 skipped, 242 passed
   

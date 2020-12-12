@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Pest;
 
+use Pest\Concerns\Extendable;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Constraint\Constraint;
+use SebastianBergmann\Exporter\Exporter;
 
 /**
  * @internal
@@ -14,6 +16,8 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 final class Expectation
 {
+    use Extendable;
+
     /**
      * The expectation value.
      *
@@ -22,6 +26,15 @@ final class Expectation
      * @var mixed
      */
     public $value;
+
+    /**
+     * The exporter instance, if any.
+     *
+     * @readonly
+     *
+     * @var Exporter|null
+     */
+    private $exporter;
 
     /**
      * Creates a new expectation.
@@ -408,10 +421,21 @@ final class Expectation
      * Asserts that the value array has the provided $key.
      *
      * @param string|int $key
+     * @param mixed      $value
      */
-    public function toHaveKey($key): Expectation
+    public function toHaveKey($key, $value = null): Expectation
     {
-        Assert::assertArrayHasKey($key, $this->value);
+        if (is_object($this->value) && method_exists($this->value, 'toArray')) {
+            $array = $this->value->toArray();
+        } else {
+            $array = (array) $this->value;
+        }
+
+        Assert::assertArrayHasKey($key, $array);
+
+        if (func_num_args() > 1) {
+            Assert::assertEquals($value, $array[$key]);
+        }
 
         return $this;
     }
@@ -491,6 +515,36 @@ final class Expectation
     }
 
     /**
+     * Asserts that the value array matches the given array subset.
+     *
+     * @param array<int|string, mixed> $array
+     */
+    public function toMatchArray($array): Expectation
+    {
+        if (is_object($this->value) && method_exists($this->value, 'toArray')) {
+            $valueAsArray = $this->value->toArray();
+        } else {
+            $valueAsArray = (array) $this->value;
+        }
+
+        foreach ($array as $key => $value) {
+            Assert::assertArrayHasKey($key, $valueAsArray);
+
+            Assert::assertEquals(
+                $value,
+                $valueAsArray[$key],
+                sprintf(
+                    'Failed asserting that an array has a key %s with the value %s.',
+                    $this->export($key),
+                    $this->export($valueAsArray[$key]),
+                ),
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * Asserts that the value object matches a subset
      * of the properties of an given object.
      *
@@ -499,7 +553,19 @@ final class Expectation
     public function toMatchObject($object): Expectation
     {
         foreach ((array) $object as $property => $value) {
-            $this->toHaveProperty($property, $value);
+            Assert::assertTrue(property_exists($this->value, $property));
+
+            /* @phpstan-ignore-next-line */
+            $propertyValue = $this->value->{$property};
+            Assert::assertEquals(
+                $value,
+                $propertyValue,
+                sprintf(
+                    'Failed asserting that an object has a property %s with the value %s.',
+                    $this->export($property),
+                    $this->export($propertyValue),
+                ),
+            );
         }
 
         return $this;
@@ -523,6 +589,20 @@ final class Expectation
         Assert::assertThat($this->value, $constraint);
 
         return $this;
+    }
+
+    /**
+     * Exports the given value.
+     *
+     * @param mixed $value
+     */
+    private function export($value): string
+    {
+        if ($this->exporter === null) {
+            $this->exporter = new Exporter();
+        }
+
+        return $this->exporter->export($value);
     }
 
     /**

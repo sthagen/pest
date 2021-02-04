@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Pest\Concerns;
 
 use Closure;
-use Pest\Expectation;
 use Pest\Support\ExceptionTrace;
 use Pest\TestSuite;
+use PHPUnit\Framework\ExecutionOrderDependency;
 use PHPUnit\Util\Test;
 use Throwable;
 
@@ -56,6 +56,24 @@ trait TestCase
     }
 
     /**
+     * Add dependencies to the test case and map them to instances of ExecutionOrderDependency.
+     */
+    public function addDependencies(array $tests): void
+    {
+        $className = get_class($this);
+
+        $tests = array_map(function (string $test) use ($className): ExecutionOrderDependency {
+            if (strpos($test, '::') === false) {
+                $test = "{$className}::{$test}";
+            }
+
+            return new ExecutionOrderDependency($test, null, '');
+        }, $tests);
+
+        $this->setDependencies($tests);
+    }
+
+    /**
      * Returns the test case name. Note that, in Pest
      * we ignore withDataset argument as the description
      * already contains the dataset description.
@@ -92,16 +110,6 @@ trait TestCase
         call_user_func(Closure::bind($afterAll, null, self::class));
 
         parent::tearDownAfterClass();
-    }
-
-    /**
-     * Creates a new expectation.
-     *
-     * @param mixed $value
-     */
-    public function expect($value): Expectation
-    {
-        return new Expectation($value);
     }
 
     /**

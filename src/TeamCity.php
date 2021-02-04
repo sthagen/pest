@@ -56,7 +56,7 @@ final class TeamCity extends DefaultResultPrinter
     /** @phpstan-ignore-next-line */
     public function startTestSuite(TestSuite $suite): void
     {
-        $this->flowId = getmypid();
+        $this->flowId = (int) getmypid();
 
         if (!$this->isSummaryTestCountPrinted) {
             $this->printEvent(
@@ -205,6 +205,9 @@ final class TeamCity extends DefaultResultPrinter
 
     private static function isPestTest(Test $test): bool
     {
-        return in_array(TestCase::class, class_uses($test), true);
+        /** @var array<string, string> $uses */
+        $uses = class_uses($test);
+
+        return in_array(TestCase::class, $uses, true);
     }
 }

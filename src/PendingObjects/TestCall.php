@@ -9,11 +9,10 @@ use Pest\Factories\TestCaseFactory;
 use Pest\Support\Backtrace;
 use Pest\Support\NullClosure;
 use Pest\TestSuite;
-use PHPUnit\Framework\ExecutionOrderDependency;
 use SebastianBergmann\Exporter\Exporter;
 
 /**
- * @method \Pest\Expectation expect(mixed $value)
+ * @method \Pest\Expectations\Expectation expect(mixed $value)
  *
  * @internal
  */
@@ -92,19 +91,9 @@ final class TestCall
      */
     public function depends(string ...$tests): TestCall
     {
-        $className = $this->testCaseFactory->getClassName();
-
-        $tests = array_map(function (string $test) use ($className): ExecutionOrderDependency {
-            if (strpos($test, '::') === false) {
-                $test = "{$className}::{$test}";
-            }
-
-            return new ExecutionOrderDependency($test, null, '');
-        }, $tests);
-
         $this->testCaseFactory
             ->factoryProxies
-            ->add(Backtrace::file(), Backtrace::line(), 'setDependencies', [$tests]);
+            ->add(Backtrace::file(), Backtrace::line(), 'addDependencies', [$tests]);
 
         return $this;
     }
